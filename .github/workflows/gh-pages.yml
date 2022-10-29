@@ -33,6 +33,9 @@ jobs:
       - name: publish blazor
         run: dotnet publish -c Release -o ./_publish
 
+      - name: copy index.html to 404.html
+        run: cp _publish/wwwroot/index.html _publish/wwwroot/404.html
+
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
