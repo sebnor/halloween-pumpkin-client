@@ -45,7 +45,6 @@ jobs:
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          BASE_BRANCH: main
-          BRANCH: gh-pages
-          FOLDER: _publish/wwwroot
-          SINGLE_COMMIT: true
+          branch: gh-pages
+          folder: _publish/wwwroot
+          single-commit: true
