@@ -1,0 +1,34 @@
+@hostname = halloween
+@port = 3000
+@baseUrl = http://{{hostname}}:{{port}}
+
+### 
+POST {{baseUrl}}/playRandom HTTP/1.1
+
+### 
+POST {{baseUrl}}/lightOn/0 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOn/1 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOn/2 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOn/3 HTTP/1.1
+
+### 
+POST {{baseUrl}}/lightOff/0 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOff/1 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOff/2 HTTP/1.1
+### 
+POST {{baseUrl}}/lightOff/3 HTTP/1.1
+
+### 
+POST {{baseUrl}}/lightToggle/0 HTTP/1.1
+### 
+POST {{baseUrl}}/lightToggle/1 HTTP/1.1
+### 
+POST {{baseUrl}}/lightToggle/2 HTTP/1.1
+### 
+POST {{baseUrl}}/lightToggle/3 HTTP/1.1
+

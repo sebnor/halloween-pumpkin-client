@@ -1,0 +1,122 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>Halloween Pumpkin</PageTitle>
+
+<h1 class="text-center fw-bold">Pumpkin remote 2000</h1>
+@if (error != null)
+{
+    <div>Error: @error</div>
+}
+@if (pumpkin == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+
+    <div class="ascii-art">
+
+                                  ████
+                                ██▓▓▓▓██
+                              ██▓▓▓▓██
+                              ██▓▓██
+                    ████████  ██▓▓██  ████████
+                ████░░░░░░░░████▓▓████░░░░░░░░████
+            ████░░░░░░░░░░██░░░░██░░░░██░░░░░░░░░░████
+          ██░░░░██░░░░░░██░░░░░░░░░░░░░░██░░░░░░██░░░░██
+        ██░░░░██░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░██░░░░██
+        ██░░██░░░░░░░░<span class="@state(pumpkin.Eyes)">██</span>░░░░░░░░██░░░░░░░░<span class="@state(pumpkin.Eyes)">██</span>░░░░░░░░██░░██
+      ██░░██░░░░░░░░<span class="@state(pumpkin.Eyes)">██████</span>░░░░░░██░░░░░░<span class="@state(pumpkin.Eyes)">██████</span>░░░░░░░░██░░██
+      ██░░██░░░░░░<span class="@state(pumpkin.Eyes)">██████████</span>░░░░░░░░░░<span class="@state(pumpkin.Eyes)">██████████</span>░░░░░░██░░██
+      ██░░██░░░░░░<span class="@state(pumpkin.Eyes)">██████████</span>░░░░░░░░░░<span class="@state(pumpkin.Eyes)">██████████</span>░░░░░░██░░██
+      ██░░██░░░░░░░░░░░░░░░░░░░░<span class="@state(pumpkin.Nose)">██</span>░░░░░░░░░░░░░░░░░░░░██░░██
+      ██░░██░░░░░░░░░░░░░░░░░░<span class="@state(pumpkin.Nose)">██████</span>░░░░░░░░░░░░░░░░░░██░░██
+      ██░░██░░░░░░░░░░░░░░░░<span class="@state(pumpkin.Nose)">██████████</span>░░░░░░░░░░░░░░░░██░░██
+      ██░░░░░░░░░░░░<span class="@state(pumpkin.Mouth)">████</span>░░░░░░░░░░░░░░░░░░<span class="@state(pumpkin.Mouth)">████</span>░░░░░░░░░░░░██
+      ██░░░░░░░░░░░░░░<span class="@state(pumpkin.Mouth)">████</span>░░░░░░░░░░░░░░<span class="@state(pumpkin.Mouth)">████</span>░░░░░░░░░░░░░░██
+        ██░░██░░░░░░░░░░<span class="@state(pumpkin.Mouth)">██████████████████</span>░░░░░░░░░░██░░██
+        ██░░░░██░░░░░░░░░░░░<span class="@state(pumpkin.Mouth)">██████████</span>░░░░░░░░░░░░██░░░░██
+          ██░░░░██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██░░░░██
+            ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░████
+                ████░░░░░░░░░░░░██░░░░░░░░░░░░████
+                    ████████████  ████████████
+
+    </div>
+}
+
+<div class="container text-center">
+    <div class="p-1">
+        <Button @onclick="() => PlaySound()" class="btn btn-primary">Play Sound 🔊</Button>
+    </div>
+    <div class="p-1">
+        <Button @onclick="() => Toggle(BodyPart.Eyes)" class="btn btn-warning">Toggle Eyes 👀</Button>
+        <Button @onclick="() => Toggle(BodyPart.Nose)" class="btn btn-warning">Toggle Nose 👃</Button>
+        <Button @onclick="() => ToggleMouth()" class="btn btn-warning">Toggle Mouth 👄</Button>
+    </div>
+</div>
+
+@code {
+    private Pumpkin? pumpkin;
+    private string? error = null;
+
+    private string state(bool state){
+        return state ? "on": "off";
+    }
+
+    private async Task ToggleMouth()
+    {
+        await Toggle(BodyPart.Mouth1);
+        await Toggle(BodyPart.Mouth2);
+    }
+
+    private async Task Toggle(BodyPart bodyPart)
+    {
+        var url = $"lightToggle/{(int)bodyPart}";
+        var response = await Http.PostAsync(url, null);
+        if (response.IsSuccessStatusCode)
+        {
+            pumpkin = await Http.GetFromJsonAsync<Pumpkin>("") ?? new Pumpkin();
+        }
+    }
+
+    private async Task PlaySound()
+    {
+        var url = $"playRandom";
+        var response = await Http.PostAsync(url, null);
+        if (!response.IsSuccessStatusCode)
+        {
+            error = "Error playing sound";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            pumpkin = await Http.GetFromJsonAsync<Pumpkin>("") ?? new Pumpkin();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
+    }
+
+    public enum BodyPart
+    {
+        Eyes,
+        Mouth1,
+        Mouth2,
+        Nose,
+    }
+
+    public record Pumpkin
+    {
+        public bool Mouth1 { get; set; }
+        public bool Mouth2 { get; set; }
+        public bool Eyes { get; set; }
+        public bool Nose { get; set; }
+        public bool Mouth { get { return Mouth1 && Mouth2; } }
+    }
+}
