@@ -42,14 +42,10 @@ jobs:
       - name: publish blazor
         run: dotnet publish -c Release -o ./_publish
 
-      - name: copy index.html to 404.html
-        run: cp ./_publish/wwwroot/index.html ./_publish/wwwroot/404.html
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Deploy to Github Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          path: './_publish'
-      
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+          BASE_BRANCH: main
+          BRANCH: gh-pages
+          FOLDER: _publish/wwwroot
+          SINGLE_COMMIT: true
